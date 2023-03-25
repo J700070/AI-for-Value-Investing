@@ -1,4 +1,4 @@
-# AI for Value Investing
+# AI for Value Investing [WIP]
 This repository provides tools and algorithms for value investing using artificial intelligence and machine learning techniques. It includes a set of scripts for data collection, analysis, and visualization, as well as models for stock price prediction and company valuation.
 
 ## Getting Started
