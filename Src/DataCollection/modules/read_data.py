@@ -13,7 +13,7 @@ def read_stock_tickers_from_file(file_name='Data/tickers.csv'):
     
 
     logging.info("Verifying if all SP500 companies are in the list of stock tickers")
-    sp500_companies = pd.read_csv("Data/sp500_companies.csv", header=0)["Symbol"].to_list()
+    sp500_companies = pd.read_csv("Data/Indexes/sp500_companies.csv", header=0)["Symbol"].to_list()
 
     for company in sp500_companies:
         company = company.replace(".", "-")
@@ -22,7 +22,7 @@ def read_stock_tickers_from_file(file_name='Data/tickers.csv'):
             raise ValueError(f"SP500 company {company} not in list of stock tickers")
         
     logging.info("Verifying if all Nasdaq100 companies are in the list of stock tickers")
-    nasdaq100_companies = pd.read_csv("Data/nasdaq100_companies.csv", header=0)["Symbol"].to_list()
+    nasdaq100_companies = pd.read_csv("Data/Indexes/nasdaq100_companies.csv", header=0)["Symbol"].to_list()
 
     for company in nasdaq100_companies:
         company = company.replace(".", "-")
@@ -43,7 +43,7 @@ def read_exchanges_from_file(file_name='Data/exchanges.json'):
             raise ValueError(f"File {file_name} is empty or contains invalid JSON.")
     return exchanges
 
-def read_stock_countries_from_file(file_name='Data/exchanges.json'):
+def read_stock_countries_from_file(file_name='Data/Exchanges/exchanges.json'):
     with open(file_name, 'r') as file:
         data = json.load(file)
         countries = [country['CountryISO3'] for country in data if country['CountryISO3'] is not None and country['CountryISO3'] != '']

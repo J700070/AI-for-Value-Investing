@@ -1,11 +1,17 @@
 import json
-import os
-import pandas as pd
 import logging
+import os
+import sys
+
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 import logging
+
+sys.path.append("C:\\Users\\juani\\Desktop\\AI-for-Value-Investing")
+from Src.DataCollection.modules.read_data import read_stock_tickers_from_file
+
 
 def determine_gender(officer_name):
     logging.info("Determining gender")
@@ -21,27 +27,12 @@ def format_if_sell(amount, transaction_acquired_disposed):
     logging.info("Formatting transaction amount")
     return -amount if transaction_acquired_disposed == "D" else amount
 
-
-def read_tickers():
-    logging.info("Reading tickers from CSV")
-    df = pd.read_csv("Data/tickers.csv", header=0)
-    df = df[(df['Type'] == 'Common Stock') | (df['Type'] == 'Preferred Stock')]
-    
-    # Safety check: Make sure all of the SP500 companies are in the list of stock tickers
-    sp500Companies = pd.read_csv("Data/sp500Companies.csv", header=0)["Symbol"].to_list()
-    for company in sp500Companies:
-        # Format company name to match the format in the list of stock tickers
-        company = company.replace(".", "-")
-        if company not in df["Code"].tolist():
-            logging.error(f"SP500 company {company} not in list of stock tickers")
-            raise Exception(f"SP500 company {company} not in list of stock tickers")
-
-    return df["Code"].tolist()
-
-
-def load_json_data(ticker):
+def load_json_data(ticker, financials=False):
     logging.info(f"Loading JSON data for ticker {ticker}")
-    file_path = os.path.join("Data", "Tickers", "General", f"{ticker}_general.json")
+    if financials:
+        file_path = os.path.join("Data", "Tickers", "Financials", f"{ticker}_financials.json")
+    else:
+        file_path = os.path.join("Data", "Tickers", "General", f"{ticker}_general.json")
     with open(file_path, "r", encoding="utf-8") as json_file:
         return json.load(json_file)
 
@@ -171,7 +162,7 @@ def process_additional_data(data, general_data):
 
 def main():
     logging.info("Starting data processing")
-    tickers = read_tickers()
+    tickers = read_stock_tickers_from_file()
 
     df = pd.DataFrame()
 
@@ -205,4 +196,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main()  

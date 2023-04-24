@@ -1,12 +1,14 @@
 import json
 import logging
 import os
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import requests
 
-from Src.data_check import check_country_macro_data
+sys.path.append("C:\\Users\\juani\\Desktop\\AI-for-Value-Investing")
 from Src.DataCollection.common import get_api_key, get_macro_indicator_list
+from Src.DataCollection.modules.fetch_data import fetch_country_macro_data
 from Src.DataCollection.modules.read_data import read_stock_countries_from_file
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -24,7 +26,7 @@ def process_country(api_token, country):
         
         # Fetch macro data for each indicator
         for indicator in get_macro_indicator_list():
-            macro_data[indicator] = check_country_macro_data(api_token, country, indicator)
+            macro_data[indicator] = fetch_country_macro_data(api_token, country, indicator)
 
         with open(f'Data/Macro/{country}_macro.json', 'w') as outfile:
             json.dump(macro_data, outfile)

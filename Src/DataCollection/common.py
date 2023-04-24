@@ -9,6 +9,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def get_api_key():
     return os.environ.get('EODHD_API_KEY')
 
+def write_ticker_to_failed_tickers (ticker):
+    failed_tickers = pd.read_csv("failed_tickers.csv", header=0)
+    failed_tickers.loc[len(failed_tickers)] = [ticker]
+    failed_tickers.to_csv("failed_tickers.csv", index=False)
 
 def read_json_file(file_path):
     try:

@@ -4,6 +4,8 @@ from io import StringIO
 import pandas as pd
 import requests
 
+from Src.DataCollection.common import write_ticker_to_failed_tickers
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def fetch_exchanges(api_token):
@@ -34,16 +36,30 @@ def fetch_exchange_tickers(api_token, exchange_code, delisted=0):
         raise requests.exceptions.RequestException(f'Error {response.status_code} for exchange {exchange_code}')
 
 def fetch_stock_fundamental_data(api_token, ticker):
-    url = f'https://eodhistoricaldata.com/api/fundamentals/{ticker}?api_token={api_token}'
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+    try:
+        url = f'https://eodhistoricaldata.com/api/fundamentals/{ticker}?api_token={api_token}'
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        logging.error(f"Error fetching fundamental data for {ticker}")
+        write_ticker_to_failed_tickers(ticker)
+
+        logging.error(f"Error: {e}")
+        return None
 
 def fetch_stock_ticker_price(api_token, ticker):
-    url = f'https://eodhistoricaldata.com/api/eod/{ticker}?api_token={api_token}&period=m'
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.text
+    try:
+        url = f'https://eodhistoricaldata.com/api/eod/{ticker}?api_token={api_token}&period=m'
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.text
+    except requests.exceptions.HTTPError as e:
+        logging.error(f"Error fetching price data for {ticker}")
+        write_ticker_to_failed_tickers(ticker)
+
+        logging.error(f"Error: {e}")
+        return None
 
 
 def fetch_stock_tickers(api_token, ticker):

@@ -1,10 +1,13 @@
-import json
 import os
+import sys
 
 import pandas as pd
-from config import TODO_LIST
-from Utils.ascii import bcolors
-from Utils.utils import print_log
+
+sys.path.append("C:\\Users\\juani\\Desktop\\AI-for-Value-Investing")
+from Src.config import TODO_LIST
+from Src.DataCollection.modules.read_data import read_stock_countries_from_file
+from Src.Utils.ascii import bcolors
+from Src.Utils.utils import print_log
 
 
 def check_data(path, success_message, failure_message):
@@ -21,9 +24,7 @@ def check_country_macro_data():
         return False
 
 
-    with open("Data/exchanges.json") as f:
-        exchanges = json.load(f)
-        all_countries = [exchange["CountryISO3"] for exchange in exchanges]
+    all_countries = read_stock_countries_from_file()
 
     macro_folder = os.listdir("Data/macro")
     countries_with_data = [country.replace("_macro.json", "") for country in macro_folder]
@@ -52,7 +53,7 @@ def print_todo_list():
 
 def check_exchange_data():
     tasks = []
-    tasks.append(check_data("Data/exchanges.json","[+] Check Exchanges data: OK.", "[+] Check Exchanges data: NOT OK. File not found."))
+    tasks.append(check_data("Data/Exchanges/exchanges.json","[+] Check Exchanges data: OK.", "[+] Check Exchanges data: NOT OK. File not found."))
 
     return tasks
 

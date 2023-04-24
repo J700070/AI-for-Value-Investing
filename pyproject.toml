@@ -1,2 +1,3 @@
 [tool.ruff]
 line-length = 180
+remove-unused-variables = false
