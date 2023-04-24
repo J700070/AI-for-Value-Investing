@@ -29,6 +29,7 @@ def process_general_data(ticker: str, data: Dict[str, Any]) -> None:
     fundamental_df = create_skeleton_dataframe(ticker, data)
     fundamental_df = add_dividends_data(fundamental_df, data)
     fundamental_df = add_outstanding_shares_data(fundamental_df, data)
+    fundamental_df = add_earnings_estimates_data(fundamental_df, data)
     fundamental_df = add_balance_sheet_data(fundamental_df, data)
     fundamental_df = add_cash_flow_data(fundamental_df, data)
     fundamental_df = add_income_statement_data(fundamental_df, data)
@@ -75,7 +76,6 @@ def add_outstanding_shares_data(df: pd.DataFrame, data: Dict[str, Any]) -> pd.Da
 
     return df.merge(shares_df, how="outer", on="year")
 
-
 def add_income_statement_data(df: pd.DataFrame, data: Dict[str, Any]) -> pd.DataFrame:
     income_data = data["Financials"]["Income_Statement"]["yearly"]
     income_df = pd.DataFrame(income_data).T.reset_index(drop=True)
@@ -121,7 +121,7 @@ def add_balance_sheet_data(df: pd.DataFrame, data: Dict[str, Any]) -> pd.DataFra
 
     return df.merge(temp_df, how="outer", on="year")
 
-def convert_fundamental_data_to_csv():
+def convert_fundamental_data_to_yearly_csv():
     logging.info("Starting data processing")
     tickers = read_stock_tickers_from_file()
 
@@ -138,4 +138,4 @@ def convert_fundamental_data_to_csv():
 
 
 if __name__ == "__main__":
-    convert_fundamental_data_to_csv()
+    convert_fundamental_data_to_yearly_csv()

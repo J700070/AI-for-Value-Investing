@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def read_stock_tickers_from_file(file_name='Data/tickers.csv'):
     df = pd.read_csv(file_name, header=0)
+    
     df = df[(df['Type'] == 'Common Stock') | (df['Type'] == 'Preferred Stock')]
     stock_tickers = df["Code"].tolist()
     
