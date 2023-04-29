@@ -4,15 +4,11 @@ import os
 
 import pandas as pd
 
+from Src.DataCollection.modules.fetch_data import fetch_index_constituents
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def get_api_key():
-    return os.environ.get('EODHD_API_KEY')
 
-def write_ticker_to_failed_tickers (ticker):
-    failed_tickers = pd.read_csv("failed_tickers.csv", header=0)
-    failed_tickers.loc[len(failed_tickers)] = [ticker]
-    failed_tickers.to_csv("failed_tickers.csv", index=False)
 
 def read_json_file(file_path):
     try:
@@ -23,14 +19,6 @@ def read_json_file(file_path):
         logging.error(f"File {file_path} not found.")
         return None
 
-
-def write_csv_file(file_path, data, header):
-    try:
-        df = pd.DataFrame(data, columns=header)
-        df.to_csv(file_path, index=False, encoding='utf-8')
-        logging.info(f"CSV file saved to {file_path}")
-    except IOError:
-        logging.error(f"Error writing to file {file_path}")  
 
 
 def get_macro_indicator_list():
@@ -75,3 +63,44 @@ def get_macro_indicator_list():
         "total_debt_service_percent_gni",
         "unemployment_total_percent",
     ]
+
+
+def check_integrity_of_tickers(ticker_list):
+    # We fetch various lists of tickers from exchanges and we make sure that they are 
+    # all included in "ticker_list"
+    logging.info("Verifying integrity of tickers")
+
+    # GSPC -> S&P500
+    sp500_tickers = fetch_index_constituents("GSPC","INDX")
+    # DJI -> Dow Jones Industrial Average
+    dow_jones_tickers = fetch_index_constituents("DJI","INDX")
+    # IXIC -> NASDAQ Composite
+    nasdaq_composite_tickers = fetch_index_constituents("IXIC","INDX")
+    # RUT -> Russell 2000
+    russell_2000_tickers = fetch_index_constituents("RUT","INDX")
+    # N225 -> Nikkei 225ç
+    # nikkei_225_tickers = fetch_index_constituents("N225","INDX")
+
+
+    # Merge all tickers
+    all_tickers = sp500_tickers + dow_jones_tickers + nasdaq_composite_tickers + russell_2000_tickers # + nikkei_225_tickers
+
+    # Remove duplicates
+    all_tickers = list(set(all_tickers))
+
+    # Replace ".US" with ""
+    all_tickers = [ticker.replace(".US","") for ticker in all_tickers]
+
+    # Remove tickers with "_old" 
+    all_tickers = [ticker for ticker in all_tickers if "_old" not in ticker]
+
+    # Check if all tickers are included in "ticker_list"
+    for ticker in all_tickers:
+        if ticker not in ticker_list:
+            logging.warning(f"Ticker {ticker} is missing from ticker_list")
+            # raise ValueError(f"Ticker {ticker} is missing from ticker_list")
+
+ 
+    
+
+

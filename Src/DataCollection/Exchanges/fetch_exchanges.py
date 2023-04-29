@@ -1,13 +1,15 @@
 import json
+import os
 import sys
 
 import requests
 
 sys.path.append("C:\\Users\\juani\\Desktop\\AI-for-Value-Investing")
 
-from Src.DataCollection.common import get_api_key
+
 from Src.DataCollection.modules.fetch_data import fetch_exchanges
 
+api_token = os.environ.get('EODHD_API_KEY')
 
 def save_exchanges_to_file(exchanges, file_name='Data/Exchanges/exchanges.json'):
     with open(file_name, 'w') as file:
@@ -15,8 +17,7 @@ def save_exchanges_to_file(exchanges, file_name='Data/Exchanges/exchanges.json')
 
 def fetch_and_save_exchanges():
     try:
-        api_token = get_api_key()
-        exchanges = fetch_exchanges(api_token)
+        exchanges = fetch_exchanges()
         save_exchanges_to_file(exchanges)
     except requests.exceptions.RequestException as e:
         print(e)

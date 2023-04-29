@@ -1,4 +1,5 @@
 from data_check import check_data_collection_status, print_todo_list
+from Src.DataCollection.modules.read_data import read_stock_tickers_from_file
 from Utils.ascii import ASCII
 from Utils.utils import bcolors
 
@@ -27,6 +28,7 @@ def main():
         elif command == "print_todo":
             print_todo_list()
         elif command == "fetch_data":
+            tickers = read_stock_tickers_from_file()
             print("Fetching data...")
             
 

@@ -10,17 +10,16 @@ import requests
 
 sys.path.append("C:\\Users\\juani\\Desktop\\AI-for-Value-Investing")
 
-from Src.DataCollection.common import (get_api_key,
-                                       write_ticker_to_failed_tickers)
 from Src.DataCollection.modules.fetch_data import (
-    fetch_stock_fundamental_data, fetch_stock_ticker_price)
+    fetch_stock_fundamental_data, fetch_stock_ticker_price,
+    write_ticker_to_failed_tickers)
 from Src.DataCollection.modules.read_data import read_stock_tickers_from_file
 from Src.Utils.ascii import bcolors
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-def process_stock_ticker(api_token, ticker):
+def process_stock_ticker(ticker):
  
     if isinstance(ticker, str) and "/" in ticker:
         return
@@ -41,7 +40,7 @@ def process_stock_ticker(api_token, ticker):
 
             logging.info(f"Fetching fundamental data for ticker {ticker}...")
 
-            fundamental_data = fetch_stock_fundamental_data(api_token, ticker)
+            fundamental_data = fetch_stock_fundamental_data(ticker)
             if fundamental_data is None:
                 return
             general_keys = ['General', 'Highlights', 'Valuation', 'SharesStats', 'Technicals', 'SplitsDividends', 'AnalystRatings', 'Holders', 'InsiderTransactions']
@@ -63,7 +62,7 @@ def process_stock_ticker(api_token, ticker):
         logging.info(f"Fetching price data for ticker {ticker}...")
 
         if not os.path.exists(price_path):
-            price_data = fetch_stock_ticker_price(api_token, ticker)
+            price_data = fetch_stock_ticker_price(ticker)
             if price_data is None:
                 return
             # Write the price data to a csv file
@@ -81,16 +80,13 @@ def process_stock_ticker(api_token, ticker):
 
 
 def fetch_stocks_data():
-    api_token = get_api_key()
     stock_tickers = read_stock_tickers_from_file()
     logging.info("Fetched stock tickers from file")
 
     with ThreadPoolExecutor() as executor:
         for ticker in stock_tickers:
-            executor.submit(process_stock_ticker, api_token, ticker).result()
+            executor.submit(process_stock_ticker, ticker).result()
     
-
-        
 
 if __name__ == '__main__':
     fetch_stocks_data()
