@@ -7,11 +7,10 @@ import pandas as pd
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-sys.path.append(str(Path("Src").joinpath("DataCollection", "modules")))
-from read_data import read_stock_tickers_from_file
 
-sys.path.append(str(Path("Src").joinpath("DataPreparation")))
-from create_general_data_index import load_json_data
+sys.path.append("C:\\Users\\juani\\Desktop\\AI-for-Value-Investing")
+from Src.DataCollection.modules.read_data import read_stock_tickers_from_file
+from Src.DataPreparation.create_general_data_index import load_json_data
 
 
 def camel_to_snake(camel_str):

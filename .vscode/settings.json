@@ -1,5 +1,6 @@
 {
     "python.analysis.extraPaths": [
-        "./Src/Utils"
+        "./Src/Utils",
+        "./Src/DataCollection/modules"
     ]
 }

@@ -45,6 +45,5 @@ def aggregate_price_data():
 
 
 
-
 if __name__ == "__main__":
     aggregate_price_data()

@@ -108,27 +108,19 @@ def replicate_sp500():
     cagr = (last_price / first_price) ** (1 / (sp500_price.shape[0] / 12)) - 1
 
     print(f"For the period {START_DATE} to {END_DATE}")
+    # Formula for CAGR: (last_price / first_price) ** (1 / (years)) - 1
+    print(f"SP500 first price: {first_price}")
+    print(f"SP500 last price: {last_price}")
+    print(f"SP500 Months: {sp500_price.shape[0]}")
+    print(f"SP500 Years: {sp500_price.shape[0] / 12}")
+
     print(f"SP500 CAGR: {cagr*100}%")
+
 
     #  Now lets get the portfolio composition of the SP500 for each year and month
     sp500_tickers_dict = get_sp500_components_by_month()
     
-    for month in sp500_tickers_dict:
-        print(f"Month: {month}")
-        # Get tickers for that month
-        tickers = sp500_tickers_dict[month]
-        # Get prices for that month
-        prices = all_prices[all_prices["Ticker"].isin(tickers)]
-        # Get the total market cap for that month
-        total_market_cap = prices.groupby("Date").sum()["Market Cap"].values[0]
-        print(f"Total market cap: {total_market_cap}")
-        # Get the weight of each stock
-        prices["Weight"] = prices["Market Cap"] / total_market_cap
-        
-
-        print(prices.head())
-
-        break
+    
 
 
 
